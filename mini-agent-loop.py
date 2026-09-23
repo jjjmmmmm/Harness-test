@@ -59,7 +59,7 @@ def execute_tool(name: str, args: dict) -> str:
             return "Error: failed"
         return msg
 
-def run_agent(task: str, client: OpenAI, max_steps: int = 10) -> str:
+def run_agent(task: str, client: OpenAI, max_steps: int = 10, model: str = "deepseek-chat") -> str:
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": task},
@@ -71,8 +71,10 @@ def run_agent(task: str, client: OpenAI, max_steps: int = 10) -> str:
             if messages[0]["role"] != "system":
                 messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
 
+        # deepseek-reasoner 不接受 temperature 参数，只给 chat 传
+        extra = {"temperature": 0} if model == "deepseek-chat" else {}
         resp = client.chat.completions.create(
-            model="deepseek-chat", temperature=0, messages=messages,
+            model=model, messages=messages, **extra
         )
         text = resp.choices[0].message.content
 
