@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D3 复核台 · runs 逐条检视</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark">D3</div>
+      <div>
+        <div class="name">复核台<span class="sub" id="brandSub">runs 逐条检视</span></div>
+      </div>
+    </div>
+
+    <button class="btn" id="btnBatch" aria-haspopup="listbox">批次 <span class="mono faint" id="batchName">—</span> ▾</button>
+    <button class="btn" id="btnRail">目录列表</button>
+    <button class="btn primary" id="btnImport">导入 run 目录</button>
+    <button class="btn" id="btnDiag" disabled>体检</button>
+    <button class="btn" id="btnExport" disabled>导出核对表</button>
+
+    <div class="spacer"></div>
+    <div class="tally" id="tally"></div>
+    <div class="seg" id="themeSeg">
+      <button data-theme-set="light">浅</button>
+      <button data-theme-set="auto">随系统</button>
+      <button data-theme-set="dark">深</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="rail">
+      <div class="filters" id="filters"></div>
+      <div class="list" id="list"></div>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="rhead" id="rhead"></div>
+      <div class="tabs" id="tabs">
+        <div class="tab-ink" id="tabInk"></div>
+      </div>
+      <div class="pane" id="pane"></div>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <button class="btn" id="btnPrev">← 上一个</button>
+    <button class="btn" id="btnNext">下一个 →</button>
+    <div class="pos" id="pos"></div>
+    <div class="bar"><i id="barFill" style="width:0"></i></div>
+    <div class="keys">
+      <span><kbd>←</kbd><kbd>→</kbd> 翻条</span>
+      <span><kbd>1</kbd>–<kbd>4</kbd> 切页</span>
+      <span><kbd>m</kbd> 判定</span>
+      <span id="footHint"></span>
+    </div>
+  </footer>
+
+</div>
+
+<div class="drop" id="drop"><div class="box">松手即导入该文件夹</div></div>
+<div id="modals"></div>
+<input type="file" id="pickDir" webkitdirectory directory multiple class="hidden">
+<input type="file" id="pickFiles" multiple accept=".jsonl,.log,.txt" class="hidden">
+
+<script src="parse.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
