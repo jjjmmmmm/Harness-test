@@ -45,6 +45,13 @@ _spec.loader.exec_module(m)
 GROUPS = {"A": False, "B": True}      # 组名 → TRUNCATE_ERRORS
 MAX_STEPS = 10                         # 与 b4 一致，harness 固定量
 
+# 模型轴（预注册修订 2，2026-09-24 数据未跑前锁定）：deepseek-chat/reasoner 别名
+# 实测均路由 deepseek-flash，故用显式 id；step 臂 key 走 STEP_API_KEY 环境变量。
+MODELS = {
+    "DS": {"id": "deepseek-flash", "key_env": "MODELING_AGENT_API_KEY", "base": "https://api.deepseek.com"},
+    "ST": {"id": "step-3.7-flash", "key_env": "STEP_API_KEY", "base": "https://api.stepfun.com/v1"},
+}
+
 
 class UsageClient:
     """透明包装：累计 usage.total_tokens。loop 代码零改动（预注册补充 2026-09-24）。"""
@@ -63,7 +70,7 @@ class UsageClient:
         return resp
 
 
-def run_one(client, group, task_key, repeat, seq=None):
+def run_one(client, model_tag, group, task_key, repeat, seq=None):
     """跑一次并留档。返回记录 dict（含判分）。"""
     task = d3_tasks.TASKS[task_key]
     tmp = Path(tempfile.mkdtemp(prefix=f"d3-{group}-{task_key}-r{repeat}-"))
@@ -93,7 +100,8 @@ def run_one(client, group, task_key, repeat, seq=None):
     passed, judge_msg = d3_tasks.judge(tmp, task_key)
 
     rec = {
-        "seq": seq, "group": group, "task": task_key, "repeat": repeat,
+        "seq": seq, "model": MODELS[model_tag]["id"], "mtag": model_tag,
+        "group": group, "task": task_key, "repeat": repeat,
         "passed": bool(passed and err is None), "api_error": err,
         "n_steps": n_steps, "elapsed_s": elapsed,
         "tokens": client.total_tokens, "artifact": art_text,
@@ -102,12 +110,13 @@ def run_one(client, group, task_key, repeat, seq=None):
     }
 
     if seq is not None:                 # 正式 run 才编号留档；冒烟写 smoke 区
-        rd = RUNS / f"run-{seq:03d}__{group}__{task_key}__r{repeat}"
+        rd = RUNS / f"run-{seq:03d}__{model_tag}__{group}__{task_key}__r{repeat}"
         if rd.exists():
             shutil.rmtree(rd)
         shutil.copytree(tmp, rd)
         (rd / "trace.log").write_text(
-            f"# run-{seq:03d} {group}({ 'TRUNCATE' if GROUPS[group] else 'FULL' }) × {task_key} × r{repeat}\n"
+            f"# run-{seq:03d} {model_tag}/{MODELS[model_tag]['id']} × {group}"
+            f"({'TRUNCATE' if GROUPS[group] else 'FULL'}) × {task_key} × r{repeat}\n"
             f"步数 {n_steps}｜用时 {elapsed}s｜tokens {rec['tokens']}｜判分 {'通过' if passed else '不过'}（{judge_msg}）"
             + (f"｜API异常 {err}" if err else "") + "\n── 步骤轨迹 ──\n" + buf.getvalue()
             + "\n── 最终答复 ──\n" + (final or ""), encoding="utf-8")
@@ -123,29 +132,32 @@ def save_jsonl(rows):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--smoke", action="store_true", help="A/B 各 T1×2，不编号不入库")
+    ap.add_argument("--smoke", action="store_true", help="每模型×每组×T1×1，不编号不入库")
     args = ap.parse_args()
 
-    if "DEEPSEEK_API_KEY" not in os.environ:
-        raise SystemExit("先设置 DEEPSEEK_API_KEY 再运行。")
+    missing = [m["key_env"] for m in MODELS.values() if m["key_env"] not in os.environ]
+    if missing:
+        raise SystemExit(f"缺少环境变量：{missing}（STEP_API_KEY 若刚加，从注册表注入或重开终端）。")
     if not d3_tasks.selftest():
         raise SystemExit("判分元测试未全过——先修尺子再跑实验（dsh-testing 纪律）。")
 
-    inner = OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+    inners = {tag: OpenAI(api_key=os.environ[m["key_env"]], base_url=m["base"])
+              for tag, m in MODELS.items()}
     rows = []
-    plan = ([(g, "T1", r) for g in GROUPS for r in (1, 2)] if args.smoke
-            else [(g, t, r) for g in GROUPS for t in d3_tasks.RUN_ORDER for r in range(1, 9)])
+    plan = ([(tag, g, "T1", 1) for tag in MODELS for g in GROUPS] if args.smoke
+            else [(tag, g, t, r) for tag in MODELS for g in GROUPS
+                  for t in d3_tasks.RUN_ORDER for r in range(1, 5)])  # 2模型×2组×8题×4=128
     if args.smoke:
         OUT.mkdir(exist_ok=True)
-    for i, (g, t, r) in enumerate(plan, 1):
-        client = UsageClient(inner)     # 每 run 独立计数
+    for i, (tag, g, t, r) in enumerate(plan, 1):
+        client = UsageClient(inners[tag])   # 每 run 独立计数
         seq = None if args.smoke else i
-        rec = run_one(client, g, t, r, seq)
+        rec = run_one(client, tag, g, t, r, seq)
         rows.append(rec)
         if not args.smoke:
-            save_jsonl(rows)            # 每跑完一条就落盘，中断可查
+            save_jsonl(rows)                # 每跑完一条就落盘，中断可查
         mark = "通过" if rec["passed"] else "不过"
-        print(f"[{'SMOKE' if args.smoke else f'run-{i:03d}'}] {g}×{t}×r{r} "
+        print(f"[{'SMOKE' if args.smoke else f'run-{i:03d}'}] {tag}×{g}×{t}×r{r} "
               f"{mark} 步数={rec['n_steps']} tokens={rec['tokens']} 用时={rec['elapsed_s']}s"
               + (f" API_ERROR={rec['api_error']}" if rec["api_error"] else ""))
     if args.smoke:

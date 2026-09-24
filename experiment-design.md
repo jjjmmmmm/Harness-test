@@ -70,3 +70,11 @@
 - **冒烟 run 不计入 128**：`--smoke` 的 A/B×T1×2 为独立冒烟（写入 smoke.jsonl），正式 128 次全新编号 run-001…128。
 - **运行留档**：每 run 一个编号目录（trace.log + result.txt + 初始文件 + 判分），results.jsonl 逐条落盘。
 - **实验载体说明**：本消融按计划 B 路径在自建 mini loop 上执行（DSH rc.6 无已验证的截断旋钮，且其 glob-first 工具面上"文件不存在"不产生报错——见卡样 04；方法同构：唯一变量/固定模型/全新目录/外部判分，报告如实注明）。
+
+## 预注册修订 2（2026-09-24，**数据尚未收集**时锁定）
+
+- **模型轴变更（用户指令 + 实测依据）**：DeepSeek 官方 API 的模型 id 实测已收敛为 `deepseek-flash` / `deepseek-v4-pro`——`deepseek-chat` 与 `deepseek-reasoner` 别名现**均路由到 deepseek-flash**（2026-09-24 探测：两个别名可调通但返回 model=deepseek-flash）。DeepSeek 臂改用显式 id **deepseek-flash**；新增**阶跃 step-3.7-flash** 第二模型臂（base `https://api.stepfun.com/v1`，key 走 STEP_API_KEY 环境变量，temperature=0 实测接受）。
+- **设计网格更新**：2 模型 × 2 配置（A/B）× 8 题 × **4 次** = 128 次（每模型 64）。**主问题（截断效应）合并两模型后仍为 64 vs 64，统计力与原设计持平**；模型轴用于回答"失败指纹是否跨模型复现"（命门第一句判定法）。每模型内 A vs B 为 32/32，只作次级分析。
+- **两臂不可互换维度**：若把"两组"换成"两个模型"跑（即丢掉 A/B 截断变量），研究问题会从 harness 归因变成模型对比——那不是本预注册要回答的问题，故不采用。
+- **temperature 条件传参**：loop 从"仅 deepseek-chat 传 0"改为"除 deepseek-reasoner 外全传 0"（两臂同版代码，A/B 仍零 diff）。
+- **冒烟**：每（模型×组）× T1 × 1 共 4 次（判分正确性已由元测试 8/8 覆盖）。

@@ -71,8 +71,8 @@ def run_agent(task: str, client: OpenAI, max_steps: int = 10, model: str = "deep
             if messages[0]["role"] != "system":
                 messages.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
 
-        # deepseek-reasoner 不接受 temperature 参数，只给 chat 传
-        extra = {"temperature": 0} if model == "deepseek-chat" else {}
+        # temperature=0 固定量：除 deepseek-reasoner 拒收该参数外全模型都传
+        extra = {} if model == "deepseek-reasoner" else {"temperature": 0}
         resp = client.chat.completions.create(
             model=model, messages=messages, **extra
         )
