@@ -1,0 +1,11 @@
+# run-059 DS/deepseek-flash × B(TRUNCATE) × T7 × r3
+步数 2｜用时 5.3s｜tokens 2295｜判分 通过（首行应为 'TOP: apple 10'，实际 'TOP: apple 10'）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'words.txt'}) -> apple banana apple cherry apple grape apple lemon apple mang
+  [step 1] run_python({'code': "from collections import Counter\ntext = open('words.txt', encoding='utf-8').read()\ncnt = Counter(text.split())\n(w, n), = cnt.most_common(1)\nopen('result.txt', 'w', encoding='utf-8').write(f'TOP: {w} {n}\\n')\nprint('total words:', sum(cnt.values()))\nprint('top:', w, n)\nprint('--- result.txt ---')\nprint(open('result.txt', encoding='utf-8').read())"}) -> total words: 50
+top: apple 10
+--- result.txt ---
+TOP: apple 
+
+── 最终答复 ──
+已完成统计：共处理 50 个词，出现最多的词是 apple，共 10 次。已写入 result.txt，其第一行恰好为：TOP: apple 10

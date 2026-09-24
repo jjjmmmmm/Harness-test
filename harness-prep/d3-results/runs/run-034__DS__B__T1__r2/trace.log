@@ -1,0 +1,16 @@
+# run-034 DS/deepseek-flash × B(TRUNCATE) × T1 × r2
+步数 3｜用时 4.2s｜tokens 2028｜判分 通过（词=apple✓ 次数=10✓）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'data.txt'}) -> apple banana apple cherry apple grape apple lemon apple mang
+  [step 1] run_python({'code': "from collections import Counter\ntext = open('data.txt').read()\nwords = text.split()\nc = Counter(words)\ntop, cnt = c.most_common(1)[0]\nprint(c.most_common())\nprint(top, cnt)\nopen('result.txt','w').write(f'{top} {cnt}\\n')"}) -> [('apple', 10), ('banana', 3), ('grape', 3), ('lemon', 3), (
+  [step 2] read_file({'path': 'result.txt'}) -> apple 10
+
+
+── 最终答复 ──
+已完成。
+
+- 数据文件：data.txt（共 50 个词）
+- 出现最多的词：**apple**，出现 **10** 次
+- 结果已写入 result.txt，内容为：`apple 10`
+
+其余词频（均为 2–3 次）：banana/grape/lemon/mango/orange/plum/kiwi/peach/berry/lime 各 3 次；cherry/pear/melon/fig/date 各 2 次。

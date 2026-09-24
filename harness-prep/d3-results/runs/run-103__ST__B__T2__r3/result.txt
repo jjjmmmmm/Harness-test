@@ -1,0 +1,20 @@
+出现最多的词: apple
+出现次数: 10
+
+详细词频统计:
+apple: 10
+banana: 3
+grape: 3
+lemon: 3
+mango: 3
+orange: 3
+plum: 3
+kiwi: 3
+peach: 3
+berry: 3
+lime: 3
+cherry: 2
+pear: 2
+melon: 2
+fig: 2
+date: 2

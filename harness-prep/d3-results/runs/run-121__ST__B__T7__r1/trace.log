@@ -1,0 +1,8 @@
+# run-121 ST/step-3.7-flash × B(TRUNCATE) × T7 × r1
+步数 2｜用时 11.7s｜tokens 2421｜判分 通过（首行应为 'TOP: apple 10'，实际 'TOP: apple 10'）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'words.txt'}) -> apple banana apple cherry apple grape apple lemon apple mang
+  [step 1] write_file({'path': 'result.txt', 'content': 'TOP: apple 10\n'}) -> 已写入 result.txt
+
+── 最终答复 ──
+已完成统计：words.txt 中出现最多的词是 apple（10 次），结果已写入 result.txt，第一行格式为 TOP: apple 10

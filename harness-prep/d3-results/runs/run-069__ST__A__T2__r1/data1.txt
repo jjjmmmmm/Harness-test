@@ -1,0 +1,5 @@
+apple banana apple cherry apple grape apple lemon apple mango
+orange pear apple plum banana apple kiwi apple melon peach
+berry lime apple cherry fig date apple grape plum kiwi
+lemon mango orange pear banana peach melon berry lime fig
+date grape kiwi lemon mango orange peach plum berry lime

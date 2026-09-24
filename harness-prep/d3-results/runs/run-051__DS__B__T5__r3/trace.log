@@ -1,0 +1,12 @@
+# run-051 DS/deepseek-flash × B(TRUNCATE) × T5 × r3
+步数 4｜用时 6.9s｜tokens 3739｜判分 不过（词=orange✓ 次数=5✗）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'badbytes.txt'}) -> Error: failed
+  [step 1] run_python({'code': "import os\nprint(os.getcwd())\nprint(os.listdir('.'))\nprint(os.path.exists('badbytes.txt'))"}) -> C:\Users\Lenovo\AppData\Local\Temp\d3-B-T5-r3-x0k6t_4x
+['bad
+  [step 2] run_python({'code': "with open('badbytes.txt','rb') as f:\n    data=f.read()\nprint(len(data))\nprint(data[:500])"}) -> 117
+b'orange pear orange peach orange kiwi orange lime orang
+  [step 3] run_python({'code': "from collections import Counter\nwith open('badbytes.txt','r',encoding='utf-8',errors='replace') as f:\n    text=f.read()\nwords=text.split()\nc=Counter(words)\ntop=c.most_common(1)[0][0]\nprint(c.most_common())\nwith open('result.txt','w',encoding='utf-8') as f:\n    f.write(top)\nprint('written:', top)"}) -> [('orange', 5), ('pear', 1), ('peach', 1), ('kiwi', 1), ('li
+
+── 最终答复 ──
+已完成。文件 badbytes.txt 含非 UTF-8 字节（如 \x80\x81\xff\xfe），直接读取会失败，故改用容错编码（errors='replace'）读取。词频统计：orange 出现 5 次，为最高频词；其余词各出现 1 次。已将 "orange" 写入 result.txt。
