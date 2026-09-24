@@ -25,7 +25,39 @@
 | **人工复核与改判记录**（128 run 逐条核对、11 条改判、2 个边界判例的裁定理由） | `harness-prep/d3-results/review-form.md`、`d3-复核记录_runs.md` |
 | 实验报告（模板 B，含"证据不够"节 7 条） | `harness-prep/report.md` |
 | 评分标准（三层 rubric + 元测试，含一处实测出闸门失明的记录） | `harness-prep/rubric.md` |
-| 三天工作的时间线 | git 历史（22 次提交：预注册 → 数据 → 复核 → 勘误，全程可溯） |
+| 三天工作的时间线 | git 历史（预注册 → 数据 → 复核 → 勘误 → 报告，全程可溯） |
+
+## 仓库结构（东西去哪找）
+
+```text
+腾讯项目/
+├── README.md / 3天速通计划.md      # 本文件；三天冲刺的总计划（D0–D3 分块验收）
+├── 01/  02/  03/                   # D1 三关产物：API 批调 / mini-agent 首版与运行 / 置信区间脚本
+├── dshtest/                        # D1：DSH headless 实测 T1–T3 的原始日志与产物
+├── 资料/
+│   ├── 论文/                       # 两篇论文 PDF + 中文精读笔记
+│   ├── DSH/                        # DSH 官方三篇文档（原文 + 中文）与零基础详解
+│   └── 教程/                       # 5 份自写教程（批调 API / mini-agent / CI / Docker / 实验设计）
+└── harness-prep/                   # 主工作区（三天实验全部在这里）
+    ├── mission.md                  # D0 命门三问与验收标准
+    ├── mini-agent-loop.py          # 被测 mini agent（3 工具 + 3 个故障注入开关）
+    ├── experiment-design.md        # 预注册设计文档（修订与勘误全部留痕）
+    ├── d3_tasks.py / d3_runner.py / d3_probe_c.py
+    │                               # 任务常量（8 题卡）/ 零 diff 实验 runner / 去锚探针
+    ├── b4_fingerprint.py           # D2 跨模型失败指纹实验驱动
+    ├── analyze_d3.py / stats.py    # 自动分析（CI 双算 + 失败标签）/ 统计工具
+    ├── rubric.md                   # 三层评分标准 + 元测试
+    ├── report.md                   # 最终实验报告（模板 B）
+    ├── notes/                      # 6 篇精读笔记（两论文 / DSH 三篇 / CI）
+    ├── failures/                   # 5 份 agent 卡样 + b4/ 指纹日志 + DSH stdout
+    └── d3-results/
+        ├── results.jsonl / sum.md / smoke.jsonl   # 128 行运行索引 / 自动汇总 / 冒烟记录
+        ├── runs/run-001…128__模型__组__题__次数/  # 128 个编号 run（初始文件 / 产物 / trace.log）
+        ├── probe-c/                # 去锚探针的 8 次运行（第三配置 C）
+        ├── review-form.md          # 人工复核表单（31 条失败逐条 + 判例裁定）
+        ├── d3-复核记录_runs.md     # 复核台导出的复核记录
+        └── review-ui/              # 本地网页复核台（7 项机械体检 + 导出，见其 README）
+```
 
 ## 实验设置（一屏版）
 

@@ -3,4 +3,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+.zcodeignore
 harness-prep/result.txt
+harness-prep/简历素材.md
