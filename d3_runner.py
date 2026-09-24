@@ -84,7 +84,8 @@ def run_one(client, model_tag, group, task_key, repeat, seq=None):
         m.WORKSPACE = str(tmp)          # read_file 的 safe_path 锚定到本 run 目录
         os.chdir(tmp)                   # run_python 子进程与 result.txt 落点同步锚定
         with contextlib.redirect_stdout(buf):
-            final = m.run_agent(task["prompt"], client, max_steps=MAX_STEPS)
+            final = m.run_agent(task["prompt"], client, max_steps=MAX_STEPS,
+                                model=MODELS[model_tag]["id"])
     except Exception as e:              # API 级异常≠任务失败：记录并在最终 jsonl 标注
         err = f"{type(e).__name__}: {e}"
     finally:
