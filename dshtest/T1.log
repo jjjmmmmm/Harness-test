@@ -1,0 +1,35 @@
+已完成。脚本 `count_words.py` 写好并成功运行。
+
+**运行结果：**
+
+```
+总词数: 50，不同单词数: 16
+出现最多的词 (出现 10 次): apple
+
+完整排名:
+ 1. apple    10
+ 2. banana    3
+ 3. grape     3
+ 4. lemon     3
+ 5. mango     3
+ 6. orange    3
+ 7. plum      3
+ 8. kiwi      3
+ 9. peach     3
+10. berry     3
+11. lime      3
+12. cherry    2
+13. pear      2
+14. melon     2
+15. fig       2
+16. date      2
+```
+
+**结论：出现最多的词是 `apple`，共 10 次。**
+
+脚本要点（`D:\ZCode项目\腾讯项目\dshtest\count_words.py`）：
+- 用正则 `[A-Za-z']+` 提取单词并统一转小写，忽略标点与大小写差异；
+- 用 `collections.Counter` 统计，并处理并列第一（`top_words` 支持多个词同频）；
+- 输出总词数、不同词数、最高频词及完整排行榜。
+
+小提示：在 Windows 控制台直接运行若中文显示乱码，先设置 `$env:PYTHONIOENCODING='utf-8'`（我第二次运行就是这样做的）。
