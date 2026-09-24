@@ -1,0 +1,16 @@
+most frequent word: plum (5 times)
+plum: 5
+pear: 1
+peach: 1
+kiwi: 1
+lime: 1
+apple: 1
+banana: 1
+cherry: 1
+orange: 1
+melon: 1
+berry: 1
+fig: 1
+date: 1
+grape: 1
+mango: 1

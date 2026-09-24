@@ -1,0 +1,14 @@
+# run-018 DS/deepseek-flash × A(FULL) × T5 × r2
+步数 3｜用时 4.6s｜tokens 2032｜判分 不过（词=orange✓ 次数=5✗）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'badbytes.txt'}) -> UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in 
+  [step 1] run_python({'code': "data = open('badbytes.txt','rb').read()\nprint(len(data))\nprint(data[:400])\n"}) -> 117
+b'orange pear orange peach orange kiwi orange lime orang
+  [step 2] run_python({'code': "import re\nfrom collections import Counter\ntext = open('badbytes.txt','rb').read().decode('utf-8', errors='ignore')\nwords = re.findall(r'\\b\\w+\\b', text)\nc = Counter(words)\nprint(c.most_common())\nopen('result.txt','w',encoding='utf-8').write(c.most_common(1)[0][0] + '\\n')\nprint('written')\n"}) -> [('orange', 5), ('pear', 1), ('peach', 1), ('kiwi', 1), ('li
+
+── 最终答复 ──
+已完成。badbytes.txt 末尾含非法字节（0x80 等），无法按 UTF-8 直接读取，我用二进制读取后以 errors='ignore' 解码，再统计词频。
+
+结果：出现最多的词是 **orange**（出现 5 次），其余词均只出现 1 次。
+
+已将该结果写入 result.txt。

@@ -1,0 +1,42 @@
+# run-008 DS/deepseek-flash × A(FULL) × T2 × r4
+步数 4｜用时 11.7s｜tokens 5733｜判分 通过（词=apple✓ 次数=10✓）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'data.txt'}) -> FileNotFoundError: [Errno 2] No such file or directory: 'C:\
+  [step 1] run_python({'code': "import os\nprint('CWD:', os.getcwd())\nfor root, dirs, files in os.walk(os.getcwd()):\n    print(root, dirs, files)\n"}) -> CWD: C:\Users\Lenovo\AppData\Local\Temp\d3-A-T2-r4-ue1l_9q8
+
+  [step 2] read_file({'path': 'data1.txt'}) -> apple banana apple cherry apple grape apple lemon apple mang
+  [step 3] run_python({'code': 'from collections import Counter\n\nwith open(\'data1.txt\', encoding=\'utf-8\') as f:\n    words = f.read().split()\n\ncounter = Counter(words)\nmx = max(counter.values())\ntop = sorted([w for w, c in counter.items() if c == mx])\n\nlines = [f"{w}\\t{c}" for w, c in counter.most_common()]\nout = (f"出现最多的词: {\', \'.join(top)} (出现 {mx} 次)\\n\\n" + "\\n".join(lines) + "\\n")\n\nwith open(\'result.txt\', \'w\', encoding=\'utf-8\') as f:\n    f.write(out)\n\nprint(out)\n'}) -> 出现最多的词: apple (出现 10 次)
+
+apple	10
+banana	3
+grape	3
+lemon	3
+m
+
+── 最终答复 ──
+已完成统计，结果已写入 result.txt。
+
+⚠️ 需说明：当前目录下没有 data.txt，只有 data1.txt（已遍历确认目录中仅此一个文件）。我判断它即为目标数据文件，故基于 data1.txt 完成统计。若这不是你要的文件，请提供正确路径或文件名，我会重做。
+
+统计结果（共 51 个词次、16 个不同词）：
+- 出现最多的词：apple，10 次
+
+词频排序：
+apple 10
+banana 3
+grape 3
+lemon 3
+mango 3
+orange 3
+plum 3
+kiwi 3
+peach 3
+berry 3
+lime 3
+cherry 2
+pear 2
+melon 2
+fig 2
+date 2
+
+result.txt 格式：首行标注最高频词及次数，其后每行「词 + 制表符 + 次数」，按频次降序排列。

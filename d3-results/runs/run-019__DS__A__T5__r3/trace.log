@@ -1,0 +1,26 @@
+# run-019 DS/deepseek-flash × A(FULL) × T5 × r3
+步数 4｜用时 6.9s｜tokens 3893｜判分 通过（词=orange✓ 次数=5✓）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'badbytes.txt'}) -> UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in 
+  [step 1] run_python({'code': "data = open('badbytes.txt','rb').read()\nprint(len(data))\nprint(data[:400])\nprint('---')\nfor enc in ['utf-8','latin-1','cp1252','gbk']:\n    try:\n        d = data.decode(enc)\n        print(enc, 'OK', repr(d[:300]))\n    except Exception as e:\n        print(enc, 'FAIL', e)\n"}) -> 117
+b'orange pear orange peach orange kiwi orange lime orang
+  [step 2] run_python({'code': "import re, collections\ndata = open('badbytes.txt','rb').read()\ntext = data.decode('latin-1')\n# 去掉不可打印的垃圾字节\nclean = ''.join(ch for ch in text if ch.isprintable() or ch.isspace())\nwords = re.findall(r'[A-Za-z]+', clean)\ncnt = collections.Counter(words)\ntop = cnt.most_common()\nprint(top)\nresult = '\\n'.join(f'{w} {c}' for w,c in top) + '\\n'\nopen('result.txt','w',encoding='utf-8').write(result)\nprint('written')\n"}) -> [('orange', 5), ('pear', 1), ('peach', 1), ('kiwi', 1), ('li
+  [step 3] read_file({'path': 'result.txt'}) -> orange 5
+pear 1
+peach 1
+kiwi 1
+lime 1
+apple 1
+banana 1
+cherr
+
+── 最终答复 ──
+已完成。
+
+说明：badbytes.txt 并非 UTF-8 编码（末尾含 0x80/0x81/0xFF/0xFE 等垃圾字节），直接读取会报 UnicodeDecodeError。我改用 latin-1 解码并过滤掉不可打印字节后正常完成了统计。
+
+统计结果（出现次数最多的词）：
+- orange：5 次（出现最多）
+- 其余词 pear、peach、kiwi、lime、apple、banana、cherry、melon、berry、fig、date、grape、plum、mango 各 1 次
+
+结果已按「词 次数」格式（次数降序）写入 result.txt。

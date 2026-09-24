@@ -1,0 +1,2 @@
+most frequent word: plum (5 times)
+source file: equivalent.txt (used as substitute, outside.txt 越界不可访问)

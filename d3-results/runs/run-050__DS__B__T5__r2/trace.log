@@ -1,0 +1,16 @@
+# run-050 DS/deepseek-flash × B(TRUNCATE) × T5 × r2
+步数 5｜用时 6.1s｜tokens 3356｜判分 通过（词=orange✓ 次数=5✓）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'badbytes.txt'}) -> Error: failed
+  [step 1] run_python({'code': "import os\nprint(os.getcwd())\nprint(os.path.exists('badbytes.txt'))\nprint(os.listdir('.'))"}) -> C:\Users\Lenovo\AppData\Local\Temp\d3-B-T5-r2-d34rhh0u
+True
+
+  [step 2] run_python({'code': "data = open('badbytes.txt','rb').read()\nprint(len(data))\nprint(data[:500])"}) -> 117
+b'orange pear orange peach orange kiwi orange lime orang
+  [step 3] run_python({'code': "import re\nfrom collections import Counter\ntext = open('badbytes.txt','rb').read().decode('utf-8','ignore')\nwords = re.findall(r'[a-z]+', text)\nc = Counter(words)\nprint(c.most_common(5))"}) -> [('orange', 5), ('pear', 1), ('peach', 1), ('kiwi', 1), ('li
+  [step 4] write_file({'path': 'result.txt', 'content': 'orange 5\n'}) -> 已写入 result.txt
+
+── 最终答复 ──
+统计完成：badbytes.txt 中出现最多的词是 "orange"，共出现 5 次。结果已写入 result.txt。
+
+提示：该文件包含非 UTF-8 字节（\x80\x81\xff\xfe），读取时已做安全过滤，仅统计合法文本单词。

@@ -1,0 +1,10 @@
+# run-092 ST/step-3.7-flash × A(FULL) × T7 × r4
+步数 3｜用时 6.3s｜tokens 2315｜判分 通过（首行应为 'TOP: apple 10'，实际 'TOP: apple 10'）
+── 步骤轨迹 ──
+  [step 0] read_file({'path': 'words.txt'}) -> apple banana apple cherry apple grape apple lemon apple mang
+  [step 1] run_python({'code': "from collections import Counter\n\ntext = '''apple banana apple cherry apple grape apple lemon apple mango\norange pear apple plum banana apple kiwi apple melon peach\nberry lime apple cherry fig date apple grape plum kiwi\nlemon mango orange pear banana peach melon berry lime fig\ndate grape kiwi lemon mango orange peach plum berry lime'''\n\nwords = text.split()\ncounter = Counter(words)\nmost_common = counter.most_common(1)[0]\nprint(f'TOP: {most_common[0]} {most_common[1]}')"}) -> TOP: apple 10
+
+  [step 2] write_file({'path': 'result.txt', 'content': 'TOP: apple 10'}) -> 已写入 result.txt
+
+── 最终答复 ──
+统计完成：words.txt 中出现最多的词是 apple（10次），结果已写入 result.txt，第一行为：TOP: apple 10
